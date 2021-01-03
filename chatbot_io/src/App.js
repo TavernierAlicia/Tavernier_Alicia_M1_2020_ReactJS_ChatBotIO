@@ -1,10 +1,12 @@
 import React from 'react';
 import Admin from './Actions/Admin';
 import Bot1 from './Actions/Bot1';
+import Bot2 from './Actions/Bot2';
+import Bot3 from './Actions/Bot3';
 import Chat from './Components/Chat';
 import Login from './Components/Login';
 
-const defaultMembers = [new Admin(), new Bot1()];
+const defaultMembers = [new Admin(), new Bot1(), new Bot2(), new Bot3()];
 
 export default class App extends React.Component {
 
