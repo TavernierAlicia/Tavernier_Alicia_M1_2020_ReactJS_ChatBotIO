@@ -1,40 +1,48 @@
-import React from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Container from '@material-ui/core/Container';
-import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import SendIcon from '@material-ui/icons/Send';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import React from 'react'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import Container from '@material-ui/core/Container'
+import Box from '@material-ui/core/Box'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import SendIcon from '@material-ui/icons/Send'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import CardMedia from '@material-ui/core/CardMedia'
 
 const   MINUTE  = 60,
         HOUR    = MINUTE * 60, 
         DAY     = HOUR * 24,
         YEAR    = DAY * 365;
 
+
 export default class Chat extends React.Component {
 
 	constructor(props) {
 		super(props);
-        this.state = {newMsgTxt: ""};
+        this.state = {newMsgTxt: ""}
     }
 
     onChange(e) {
-        this.setState({newMsgTxt: e.target.value});
+        this.setState({newMsgTxt: e.target.value})
     }
 
     chatContainer = React.createRef();
 
     scrollToMyRef = () => {
-        const scroll = this.chatContainer.current.scrollHeight - this.chatContainer.current.clientHeight;
-        this.chatContainer.current.scrollTo(0, scroll);
+        const scroll = this.chatContainer.current.scrollHeight - this.chatContainer.current.clientHeight
+        this.chatContainer.current.scrollTo(0, scroll)
     };
 
-    componentDidMount = () => this.scrollToMyRef();
+    componentDidMount = () => {
+
+        let self = this
+        setTimeout(_ => self.scrollToMyRef(), 300)
+    }
 
     changeCurrent = conv => {
         this.props.changeConv(conv)
+        let self = this
+        setTimeout(_ => self.scrollToMyRef(), 300)
     }
 
 
@@ -43,11 +51,17 @@ export default class Chat extends React.Component {
 
                 
         const sendMsg = _ => {
-            let content = this.state.newMsgTxt;
-            this.props.new(content, localStorage.getItem('username'), this.scrollToMyRef);
+            let content = this.state.newMsgTxt
+            this.props.new(content, localStorage.getItem('username'), "", this.scrollToMyRef)
             this.setState({
                 newMsgTxt: ""
             });
+        }
+
+        const onKeyPress = (e) => {
+            if (e.key === 'Enter') {
+                sendMsg()
+            }
         }
 
         const Styles = {
@@ -75,6 +89,10 @@ export default class Chat extends React.Component {
                 flexGrow: "1",
                 overflowX: 'scroll'
             },
+            msgImg: {
+                height: "100%",
+                width: "100%"
+            },
             msgList: {
                 maxWidth: "1200px",
                 height: "75%",
@@ -99,7 +117,7 @@ export default class Chat extends React.Component {
             },
             msgMoreData: {
                 opacity: "0.7",
-                fontSize: '0.8em',
+                fontSize: '0.8em'
             },
             msgDate: {
             },
@@ -116,7 +134,20 @@ export default class Chat extends React.Component {
                 textTransform: "uppercase",
                 display: "flex",
                 justifyContent: "center",
-                alignItems: "center"
+                alignItems: "center",
+                overflow: "hidden"
+            },
+            msgInitialActive: {
+                width: "40px",
+                minWidth: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                border: "4px solid #F40057",
+                textTransform: "uppercase",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "hidden"
             },
             msgBuffer: {
                 margin: "15px"
@@ -135,50 +166,50 @@ export default class Chat extends React.Component {
             logoutIcon: {
                 marginLeft: "5px"
             }
-
-
         };
 
         const cleanDate = date => {
-            date = new Date(date);
-            const secondsAgo = Math.round((+new Date() - date) / 1000);
+            date = new Date(date)
+            const secondsAgo = Math.round((+new Date() - date) / 1000)
             if (secondsAgo < MINUTE) {
-                return secondsAgo + "s";
+                return secondsAgo + "s"
             } else if (secondsAgo < HOUR) {
-                return Math.floor(secondsAgo / MINUTE) + "m";
+                return Math.floor(secondsAgo / MINUTE) + "m"
             } else if (secondsAgo < DAY) {
-                return Math.floor(secondsAgo / HOUR) + "h";
+                return Math.floor(secondsAgo / HOUR) + "h"
             } else if (secondsAgo < YEAR) {
-                return date.toLocaleString("default", { day: "numeric", month: "short" });
+                return date.toLocaleString("default", { day: "numeric", month: "short" })
             } else {
-                return date.toLocaleString("default", { year: "numeric", month: "short" });
+                return date.toLocaleString("default", { year: "numeric", month: "short" })
             }
     
         }
-
-        const getLetter = (name = "") => {
-            if (!name) return "";
-            let splittedName = name.split(' ');
-            let initials = splittedName[0][0];
-            if (splittedName.length>1) initials += splittedName[1][0];
-            return initials;
-        }
-
         
+        const addLineBreaks = string => {
+            return string.split('\n').map((text, index) => (
+              <React.Fragment key={index}>
+                {text}
+                <br />
+              </React.Fragment>
+            ));
+        };
+
         const Message = (id, msg) => msg.is_user ? (
             <ListItem key={ id } style={{...Styles.msg, ...Styles.msgRight }} >
                 <Container style={Styles.msgContent}>
                     <Box component="span" style={{...Styles.msgAuthor, ...Styles.msgMoreData}}>{ msg.author}</Box>
-                    <Box component="span" style={Styles.msgBuffer}>{ msg.message }</Box>
+                    <Box component="span" style={Styles.msgBuffer}>{ addLineBreaks(msg.message) }</Box>
                     <Box component="span" style={{...Styles.msgDate, ...Styles.msgMoreData}}>{ cleanDate(msg.date) }</Box>
                 </Container>
             </ListItem>
         ) : (
             <ListItem key={ id } style={{...Styles.msg, ...Styles.msgLeft}} >
-                <Box component="div" style={Styles.msgInitial} >{ getLetter(msg.author) }</Box>
+                <Box component="div" style={Styles.msgInitial} >
+                    <CardMedia style={Styles.msgImg} image={msg.pic}></CardMedia>
+                </Box>
 				<Container style={Styles.msgContent}>
                     <Box component="span" style={{...Styles.msgAuthor, ...Styles.msgMoreData}}>{ msg.author}</Box>
-                    <Box component="span" style={Styles.msgBuffer}>{ msg.message }</Box>
+                    <Box component="span" style={Styles.msgBuffer}>{ addLineBreaks(msg.message) }</Box>
 					<Box component="span" style={{...Styles.msgDate, ...Styles.msgMoreData}}>{ cleanDate(msg.date) }</Box>
 				</Container>
 			</ListItem>
@@ -186,21 +217,23 @@ export default class Chat extends React.Component {
 
 
 
-        const Messages = [];
+        const Messages = []
         for (let i = 0, j = this.props.messages.length; i < j; i++) {
-            Messages.push(Message(i, this.props.messages[i]));
+            Messages.push(Message(i, this.props.messages[i]))
         }
 
 
         const Member = (id, mb) => (
             <ListItem key={ id } style={Styles.member} onClick={_ => this.changeCurrent(mb.id) }>
-                <Box component="div" style={Styles.msgInitial} >{ getLetter(mb.name) }</Box>
+                <Box component="div" style={Styles.msgInitialActive} >
+                    <CardMedia style={Styles.msgImg} image={mb.pic}></CardMedia>
+                </Box>
                 <Box component="span" style={Styles.msgMemberName}>{ mb.name }</Box>
             </ListItem>
         );
         const Members = [];
         for (let i = 0, j = this.props.members.length; i < j; i++) {
-            Members.push(Member(i, this.props.members[i]));
+            Members.push(Member(i, this.props.members[i]))
         }
 
         return (
@@ -221,6 +254,7 @@ export default class Chat extends React.Component {
                         this.props.canWrite ?
                         (<TextField 
                             value={this.state.newMsgTxt} 
+                            onKeyPress={e => onKeyPress(e)}
                             onChange={e => this.onChange(e)} style={Styles.newMsgContent} 
                             id="standard-basic" 
                             label="Please type here..." 

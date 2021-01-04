@@ -36,7 +36,7 @@ This bot is explaining the purpose of the service. You can't send him messages.
 
 ### Special commands
 - /netflix : open Netflix in a new tab
-- /game + game name : open the game you choose in a new tab
+- /game + game name : open the game you choose in a new tab (if you don't type the game you want, it open a random game)
 - /music + service name (Spotify or Deezer) : open Spotify or Deezer in a new tab
 
 

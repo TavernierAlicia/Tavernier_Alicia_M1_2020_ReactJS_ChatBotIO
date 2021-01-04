@@ -1,4 +1,4 @@
-import Member from './Member.js';
+import Member from './Member.js'
 
 // manage netflix
 function netflix() {
@@ -8,31 +8,43 @@ function netflix() {
 
 // manage games
 function games(game) {
+    var games = [
+        'https://www.geoguessr.com/signin',
+        'http://slither.io',
+        'https://agar.io',
+        'https://diep.io',
+        'https://skribbl.io'
+    ] 
+    game = game.substring(5).trim()
     switch (game.toLowerCase()) {
         case "geo":
-            window.open('https://www.geoguessr.com/signin')
+            window.open(games[0])
             return "Openning Geoguessr... Ok."
         case "slither":
-            window.open('http://slither.io')
+            window.open(games[1])
             return "Openning SlitherIO... Ok."
         case "agar":
-            window.open('https://agar.io')
+            window.open(games[2])
             return "Openning AgarIO... Ok."
         case "diep":
-            window.open('https://diep.io')
+            window.open(games[3])
             return "Openning DiepIO... Ok."
         case "draw":
-            window.open('https://skribbl.io')
+            window.open(games[4])
             return "Openning SkribblIO... Ok."
+        case "":
+            window.open(games[Math.floor(Math.random() * (games.length))])
+            console.log(games)
+            return "Opening a random game..."
         default:
-            return "Couldn't open "+game
+            return "Sorry, I don't know this game :("
     }
 }
 
 
-
 // manage music
 function music(service) {
+    service = service.substring(6).trim()
     if (service.toLowerCase() === "spotify") {
         window.open('https://www.spotify.com')
         return "Openning Spotify... Ok"
@@ -61,7 +73,7 @@ const commands = [
         input: "/help",
         alias: [],
         desc: "Answers default question /help",
-        res: _ => "/hello to say 'hello', /who to ask 'who am I' and /advise to have some random advices "
+        res: _ => "I'm a chatbot! Here you can type some commands to do some stuff: \n /hello to say 'hello', \n /who to ask 'who am I', \n /netflix to open Netflix,  \n /gamelist to know the list of my games, \n /game with the name of your game to open a game, \n /music with \"spotify\" or \"deezer\" after to open Spotify or Deezer"
     },
     // Specific commands
     {
@@ -71,26 +83,31 @@ const commands = [
         res: _ => "Openning Netflix..." + netflix()
     },
     {
+        input: "/gamelist",
+        alias: [],
+        desc: "Open the games list",
+        res: _ => "You can play 5 different games with the command /games: \n -\"geo\" to play Geoguessr, \n -\"agar\" to play Agar.io, \n -\"slither\" to play Slither.io, \n -\"diep\" to play Diep.io, \n -\"draw\" to play Skribbl.io \n \n ... Or just type /games to play a random game!"
+    },
+    {
         input: "/game",
         alias: [],
-        desc: "Answers third user question",
-        res: _ => ""+games("agar")
+        desc: "Open a browser game",
+        res: msg => games(msg)
     },
     {
         input: "/music",
         alias: [],
-        desc: "Answers third user question",
-        res: _ => ""+music("Spotify")
+        desc: "Launch Soptify or Deezer",
+        res: msg => music(msg)
     },
 ]
 
-// TODO: default "ask for help answer"
 
 export default class Bot2 extends Member {
 
     constructor() {
         // human_name, id_name, commands_list, is_disabled
-        super('Bot 3', 'bot3', commands);
+        super('Rupert', 'bot3', commands, "https://www.flaticon.com/svg/static/icons/svg/270/270103.svg")
     }
 
 }

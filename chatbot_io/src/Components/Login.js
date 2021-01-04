@@ -1,17 +1,17 @@
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Container from '@material-ui/core/Container';
-import Button from '@material-ui/core/Button';
+import React from 'react'
+import TextField from '@material-ui/core/TextField'
+import Container from '@material-ui/core/Container'
+import Button from '@material-ui/core/Button'
 
 export default class Login extends React.Component {
 
 	constructor(props) {
-		super(props);
+		super(props)
         this.state = {
             setLogin: u => {
-                console.log(u);
-                localStorage.setItem('username', u);
-                props.setLogin();
+                console.log(u)
+                localStorage.setItem('username', u)
+                props.setLogin()
             }
         };
     }

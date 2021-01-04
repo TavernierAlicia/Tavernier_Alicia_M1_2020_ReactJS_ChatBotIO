@@ -1,37 +1,33 @@
-import Member from './Member.js';
+import Member from './Member.js'
 
 // manage weather
-// call api: api.openweathermap.org/data/2.5/weather?q={city name}&appid=2f5d313b3e303fd46091873333d66c31&lang=fr
+// call api: api.openweathermap.org/data/2.5/weather?q={city name}&appid={apiKey}&lang=en&lang=en&units=metric
 function getWeather(city) {
-    const request = new Request('api.openweathermap.org/data/2.5/weather?q='+city+'&appid=2f5d313b3e303fd46091873333d66c31&lang=fr')
-
-    fetch(request)
-    .then(response => {
-    if (response.status === 200) {
-        console.log(response.json())
-        //return response.json();
-    } else {
-        console.log("ERROR")
-    }
-  })
-  .then(response => {
-    console.debug(response);
-    // ...
-  }).catch(error => {
-    console.error(error);
-  });
+    city = city.substring(8).trim()
+    return fetch('https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=2f5d313b3e303fd46091873333d66c31&lang=en&units=metric')
+        .then(res => {
+            if (res.status === 200) {
+                return res
+            } else {
+                return Promise.reject("Sorry, I cannot give the weather of "+city+"; \n This city may not exists :(")
+            }
+        })
+        .then(res => res.json())
+        .then(info => "Position: " + info.name + " " + info.sys.country + ",  Weather: " + info.main.temp + "°C " + info.weather[0].description)
+        .catch(err => err)
 }
 
 // manage search
 function search(term) {
-    window.open('http://google.com/search?q='+term)
+    term = term.substring(7).trim()
+    window.open('http://google.com/search?q=' + term)
     return "Ok."
 }
 // manage time
 
 function correctMin(min) {
     if (min < 10) {
-        min = "0" + min;
+        min = "0" + min
     }
     return min
 }
@@ -85,7 +81,7 @@ const commands = [
         input: "/help",
         alias: [],
         desc: "Answers default question /help",
-        res: _ => "/hello to say 'hello', /who to ask 'who am I' and /hour to know what time is it "
+        res: _ => "I'm a chatbot! Here you can type some commands to do some stuff: \n /hello to say 'hello', \n /who to ask 'who am I', \n /time to know what time is it  \n /weather with the name of your city to know the weather \n /search with a term to research with Google to open a new tab with your research"
     },
     // Specific commands
     {
@@ -98,13 +94,13 @@ const commands = [
         input: "/weather",
         alias: [],
         desc: "Give weather",
-        res: _ => ""+getWeather("Meaux")
+        res: msg => getWeather(msg)
     },
     {
         input: "/search",
         alias: [],
-        desc: "Give time",
-        res: _ => "Openning google tab..." + search("boule")
+        desc: "Search on Google",
+        res: msg => "Openning Google tab..." + search(msg)
     },
 ]
 
@@ -113,7 +109,7 @@ export default class Bot1 extends Member {
 
     constructor() {
         // human_name, id_name, commands_list, is_disabled
-        super('Bot 1', 'bot1', commands);
+        super('Robert', 'bot1', commands, "https://www.flaticon.com/svg/static/icons/svg/270/270140.svg")
     }
 
 }
