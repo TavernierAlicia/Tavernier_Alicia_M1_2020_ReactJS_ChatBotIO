@@ -123,7 +123,8 @@ export default class Chat extends React.Component {
             },
             msgMemberName: {
                 whiteSpace: "nowrap",
-                margin: "15px"
+                margin: "15px",
+                fontSize: 20
             },
             msgInitial: {
                 width: "40px",
@@ -142,7 +143,7 @@ export default class Chat extends React.Component {
                 minWidth: "40px",
                 height: "40px",
                 borderRadius: "50%",
-                border: "4px solid #F40057",
+                border: "4px outset #F40057",
                 textTransform: "uppercase",
                 display: "flex",
                 justifyContent: "center",
@@ -223,14 +224,21 @@ export default class Chat extends React.Component {
         }
 
 
-        const Member = (id, mb) => (
-            <ListItem key={ id } style={Styles.member} onClick={_ => this.changeCurrent(mb.id) }>
+        const Member = (id, mb) => mb.id === this.props.current ? (
+            <ListItem key={ id } style={Styles.member} onClick={ _ => this.changeCurrent(mb.id) }>
                 <Box component="div" style={Styles.msgInitialActive} >
                     <CardMedia style={Styles.msgImg} image={mb.pic}></CardMedia>
                 </Box>
                 <Box component="span" style={Styles.msgMemberName}>{ mb.name }</Box>
             </ListItem>
-        );
+        ) : 
+          <ListItem key={ id } style={Styles.member} onClick={ _ => this.changeCurrent(mb.id) }>
+                <Box component="div" style={Styles.msgInitial} >
+                    <CardMedia style={Styles.msgImg} image={mb.pic}></CardMedia>
+                </Box>
+                <Box component="span" style={Styles.msgMemberName}>{ mb.name }</Box>
+            </ListItem>
+            
         const Members = [];
         for (let i = 0, j = this.props.members.length; i < j; i++) {
             Members.push(Member(i, this.props.members[i]))
@@ -263,7 +271,7 @@ export default class Chat extends React.Component {
                             id="filled-disabled"
                             variant="filled"
                             onChange={e => this.onChange(e)} style={Styles.newMsgContent} 
-                            label="You can't write in this conversation." 
+                            label="You can't write in this conversation. You have been blocked by the administrator." 
                         />)
                     }
                     <Button style={Styles.newMsgBtn} onClick={_ => sendMsg()} variant="contained">

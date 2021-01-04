@@ -26,6 +26,7 @@ export default class Login extends React.Component {
                 justifyContent: "center",
                 width: "100vw",
                 height: "100vh"
+                
             },
             loginBtn: {
                 marginTop: "20px"

@@ -121,7 +121,7 @@ export default class App extends React.Component {
 
 
     return this.state.name != null ? (
-      <Chat canWrite={canWrite()} messages={this.state.messages[this.state.current] || []} new={(c, u, p, ck) => this.sendMsg(c, u, p, ck)} members={defaultMembers} changeConv={c => this.changeMember(c)} logout={_ => this.logout()}>
+      <Chat canWrite={canWrite()} messages={this.state.messages[this.state.current] || []} new={(c, u, p, ck) => this.sendMsg(c, u, p, ck)} members={defaultMembers} changeConv={c => this.changeMember(c)} logout={_ => this.logout()} current={this.state.current}>
       </Chat>
     ) : (
         <Login setLogin={_ => this.login()}>
