@@ -32,6 +32,21 @@ function correctMin(min) {
     return min
 }
 
+// const Member = (id, mb) => mb.id === this.props.current ? (
+//    <ListItem key={ id } style={Styles.member} onClick={ _ => this.changeCurrent(mb.id) }>
+//        <Box component="div" style={Styles.msgInitialActive} >
+//            <CardMedia style={Styles.msgImg} image={mb.pic}></CardMedia>
+//        </Box>
+//        <Box component="span" style={Styles.msgMemberName}>{ mb.name }</Box>
+//    </ListItem>
+// ) : 
+//  <ListItem key={ id } style={Styles.member} onClick={ _ => this.changeCurrent(mb.id) }>
+//        <Box component="div" style={Styles.msgInitial} >
+//            <CardMedia style={Styles.msgImg} image={mb.pic}></CardMedia>
+//        </Box>
+//        <Box component="span" style={Styles.msgMemberName}>{ mb.name }</Box>
+//    </ListItem>
+
 function selectSentence(hour) {
     var sentence
     switch (true) {

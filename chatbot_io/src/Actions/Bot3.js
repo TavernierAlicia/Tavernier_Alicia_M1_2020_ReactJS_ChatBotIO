@@ -34,7 +34,6 @@ function games(game) {
             return "Openning SkribblIO... Ok."
         case "":
             window.open(games[Math.floor(Math.random() * (games.length))])
-            console.log(games)
             return "Opening a random game..."
         default:
             return "Sorry, I don't know this game :("

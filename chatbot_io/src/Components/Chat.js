@@ -3,16 +3,15 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import Container from '@material-ui/core/Container'
 import Box from '@material-ui/core/Box'
-import TextField from '@material-ui/core/TextField'
+
 import Button from '@material-ui/core/Button'
-import SendIcon from '@material-ui/icons/Send'
+
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import CardMedia from '@material-ui/core/CardMedia'
 
-const   MINUTE  = 60,
-        HOUR    = MINUTE * 60, 
-        DAY     = HOUR * 24,
-        YEAR    = DAY * 365;
+import MessagesList from '../MessagesList';
+
+
 
 
 export default class Chat extends React.Component {
@@ -22,47 +21,20 @@ export default class Chat extends React.Component {
         this.state = {newMsgTxt: ""}
     }
 
-    onChange(e) {
-        this.setState({newMsgTxt: e.target.value})
-    }
 
-    chatContainer = React.createRef();
 
-    scrollToMyRef = () => {
-        const scroll = this.chatContainer.current.scrollHeight - this.chatContainer.current.clientHeight
-        this.chatContainer.current.scrollTo(0, scroll)
-    };
 
-    componentDidMount = () => {
 
-        let self = this
-        setTimeout(_ => self.scrollToMyRef(), 300)
-    }
 
     changeCurrent = conv => {
         this.props.changeConv(conv)
-        let self = this
-        setTimeout(_ => self.scrollToMyRef(), 300)
+        // let self = this
+        // setTimeout(_ => self.scrollToMyRef(), 300)
     }
 
 
 
 	render() {
-
-                
-        const sendMsg = _ => {
-            let content = this.state.newMsgTxt
-            this.props.new(content, localStorage.getItem('username'), "", this.scrollToMyRef)
-            this.setState({
-                newMsgTxt: ""
-            });
-        }
-
-        const onKeyPress = (e) => {
-            if (e.key === 'Enter') {
-                sendMsg()
-            }
-        }
 
         const Styles = {
             mainContainer: {
@@ -77,7 +49,6 @@ export default class Chat extends React.Component {
             asideContainer: {
                 height: "10%",
                 display: "flex",
-                margin: "auto",
                 alignItems: "center",
                 width: "100%",
                 padding: 0,
@@ -169,59 +140,9 @@ export default class Chat extends React.Component {
             }
         };
 
-        const cleanDate = date => {
-            date = new Date(date)
-            const secondsAgo = Math.round((+new Date() - date) / 1000)
-            if (secondsAgo < MINUTE) {
-                return secondsAgo + "s"
-            } else if (secondsAgo < HOUR) {
-                return Math.floor(secondsAgo / MINUTE) + "m"
-            } else if (secondsAgo < DAY) {
-                return Math.floor(secondsAgo / HOUR) + "h"
-            } else if (secondsAgo < YEAR) {
-                return date.toLocaleString("default", { day: "numeric", month: "short" })
-            } else {
-                return date.toLocaleString("default", { year: "numeric", month: "short" })
-            }
-    
-        }
-        
-        const addLineBreaks = string => {
-            return string.split('\n').map((text, index) => (
-              <React.Fragment key={index}>
-                {text}
-                <br />
-              </React.Fragment>
-            ));
-        };
+       
 
-        const Message = (id, msg) => msg.is_user ? (
-            <ListItem key={ id } style={{...Styles.msg, ...Styles.msgRight }} >
-                <Container style={Styles.msgContent}>
-                    <Box component="span" style={{...Styles.msgAuthor, ...Styles.msgMoreData}}>{ msg.author}</Box>
-                    <Box component="span" style={Styles.msgBuffer}>{ addLineBreaks(msg.message) }</Box>
-                    <Box component="span" style={{...Styles.msgDate, ...Styles.msgMoreData}}>{ cleanDate(msg.date) }</Box>
-                </Container>
-            </ListItem>
-        ) : (
-            <ListItem key={ id } style={{...Styles.msg, ...Styles.msgLeft}} >
-                <Box component="div" style={Styles.msgInitial} >
-                    <CardMedia style={Styles.msgImg} image={msg.pic}></CardMedia>
-                </Box>
-				<Container style={Styles.msgContent}>
-                    <Box component="span" style={{...Styles.msgAuthor, ...Styles.msgMoreData}}>{ msg.author}</Box>
-                    <Box component="span" style={Styles.msgBuffer}>{ addLineBreaks(msg.message) }</Box>
-					<Box component="span" style={{...Styles.msgDate, ...Styles.msgMoreData}}>{ cleanDate(msg.date) }</Box>
-				</Container>
-			</ListItem>
-        );
-
-
-
-        const Messages = []
-        for (let i = 0, j = this.props.messages.length; i < j; i++) {
-            Messages.push(Message(i, this.props.messages[i]))
-        }
+       
 
 
         const Member = (id, mb) => mb.id === this.props.current ? (
@@ -254,30 +175,7 @@ export default class Chat extends React.Component {
                         Log-out<ExitToAppIcon fontSize="small" style={Styles.logoutIcon} />
                     </Button>
                 </Container>
-                <List style={Styles.msgList} ref={this.chatContainer}>
-				    { Messages }
-			    </List>
-                <Container style={{...Styles.asideContainer, ...Styles.newMsg}}>
-                    {
-                        this.props.canWrite ?
-                        (<TextField 
-                            value={this.state.newMsgTxt} 
-                            onKeyPress={e => onKeyPress(e)}
-                            onChange={e => this.onChange(e)} style={Styles.newMsgContent} 
-                            id="standard-basic" 
-                            label="Please type here..." 
-                        />) : (<TextField 
-                            disabled
-                            id="filled-disabled"
-                            variant="filled"
-                            onChange={e => this.onChange(e)} style={Styles.newMsgContent} 
-                            label="You can't write in this conversation. You have been blocked by the administrator." 
-                        />)
-                    }
-                    <Button style={Styles.newMsgBtn} onClick={_ => sendMsg()} variant="contained">
-                        <SendIcon fontSize="small" />
-                    </Button>
-                </Container>
+                <MessagesList robotId={this.props.current} member={this.props.member} canWrite={this.props.canWrite}/>
             </Container>
         );
     }

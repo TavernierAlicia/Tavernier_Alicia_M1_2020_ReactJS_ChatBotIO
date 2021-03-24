@@ -9,7 +9,6 @@ export default class Login extends React.Component {
 		super(props)
         this.state = {
             setLogin: u => {
-                console.log(u)
                 localStorage.setItem('username', u)
                 props.setLogin()
             }

@@ -6,6 +6,11 @@ import Bot3 from './Actions/Bot3'
 import Chat from './Components/Chat'
 import Login from './Components/Login'
 
+import { Provider } from 'react-redux';
+
+// Functions
+import store from './store';
+
 const defaultMembers = [new Admin(), new Bot1(), new Bot2(), new Bot3()]
 
 export default class App extends React.Component {
@@ -21,50 +26,6 @@ export default class App extends React.Component {
   changeConv(newConv) {
     localStorage.setItem('current', newConv)
     this.setState({ name: this.state.name, messages: this.state.messages, current: newConv })
-  }
-
-  sendMsg(content, user, pic="", callback = _ => { }) {
-    if (!content || !user) return
-    let updateMessages = this.state.messages
-    if (!updateMessages[this.state.current]) updateMessages[this.state.current] = []
-    updateMessages[this.state.current].push({
-      message: content,
-      author: user,
-      pic: pic,
-      is_user: user === this.state.name,
-      date: new Date().toISOString()
-    });
-
-    let realCallback = callback
-    let messageSent = false
-    let self = this
-    function sendMessage() {
-      self.setState(
-        {
-          name: self.state.name || null,
-          messages: updateMessages,
-          current: self.state.current || null
-        }, _ => realCallback()
-      );
-
-      localStorage.setItem('messages', JSON.stringify(updateMessages))
-    }
-    if (user === this.state.name) {
-      let conv = defaultMembers.find(m => m.getId() === this.state.current)
-      if (conv) {
-        let sentence = new Promise(resolve => resolve(conv.getCommand(content)))
-        messageSent = true
-        sentence.then(response => {
-          if (response) {
-            realCallback = _ => this.sendMsg(response, conv.getName(), conv.getPic(), callback)
-          }
-          sendMessage()
-        })
-        //let response = conv.getCommand(content);
-      }
-    }
-    if (!messageSent) sendMessage()
-    // if (!realCallback) realCallback = callback;
   }
 
   login() {
@@ -92,7 +53,6 @@ export default class App extends React.Component {
     this.setState(
       {
         name: this.state.name,
-        messages: this.state.messages,
         current: conv
       },
       _ => this.forceUpdate()
@@ -104,12 +64,10 @@ export default class App extends React.Component {
     this.setState(
       {
         name: localStorage.getItem('username') || null,
-        messages: JSON.parse(localStorage.getItem('messages') || "{}"),
         current: localStorage.getItem('current') || null
       }
     );
   }
-
 
 
   render() {
@@ -121,13 +79,14 @@ export default class App extends React.Component {
 
 
     return this.state.name != null ? (
-      <Chat canWrite={canWrite()} messages={this.state.messages[this.state.current] || []} new={(c, u, p, ck) => this.sendMsg(c, u, p, ck)} members={defaultMembers} changeConv={c => this.changeMember(c)} logout={_ => this.logout()} current={this.state.current}>
-      </Chat>
+      <Provider store={store}>
+        <Chat canWrite={canWrite()} members={defaultMembers} changeConv={c => this.changeMember(c)} logout={_ => this.logout()} current={this.state.current} member={defaultMembers.find(m => m.getId() === this.state.current)}>
+        </Chat>
+      </Provider>
     ) : (
         <Login setLogin={_ => this.login()}>
         </Login>
-      )
-      ;
+      );
   }
 }
 
